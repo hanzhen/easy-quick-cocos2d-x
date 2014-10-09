@@ -1,0 +1,14 @@
+/samples/config/proj.ios
+/samples/config/proj.wp8
+/samples/config/.buildpath
+/samples/config/.cocos-project.json
+/samples/config/.project
+/samples/config/config.json
+/samples/config/debug_mac.sh
+/samples/config/debug_win.bat
+/samples/config/native
+/samples/config/proj.android
+/samples/config/proj.android_without_anysdk
+/compile_easy_framework.bat
+/samples/config/config.sublime-workspace
+/samples/config/config.sublime-project
