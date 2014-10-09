@@ -3,7 +3,6 @@
 -- Date: 2014-10-09 15:38:28
 --
 
-import(".globals")
 import(".functions")
 
 easy = easy or {}
