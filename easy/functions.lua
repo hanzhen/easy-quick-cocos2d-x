@@ -20,6 +20,11 @@ function color.hex2rgb(hex)
 	return cc.c3b(r, g, b)
 end
 
+-- 输出16进制字符串
+function string.hex(input)
+	return string.gsub(input, "(.)", function (x) return string.format("%02X", string.byte(x)) end)
+end
+
 -- convert string to char array
 function string.string2chars(input)
 	local list = {}
