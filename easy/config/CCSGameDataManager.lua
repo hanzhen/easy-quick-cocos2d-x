@@ -1,7 +1,7 @@
 --
 -- Description: Game data manager for Cocos Studio GameDataEditor.
 -- Author: Jerry Lee
--- Date: 2014-10-09 15:38:28
+-- Date: 2014-10-09
 --
 
 local CCSGameDataManager = class("CCSGameDataManager")
