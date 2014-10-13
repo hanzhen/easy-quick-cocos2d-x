@@ -11,13 +11,13 @@ CCSGameDataManager.DATA_FILE_EXTENSION = ".json"
 
 -- constructor method
 function CCSGameDataManager:ctor()
-	self.dataHash = {}
-	self.objectMode = false
+	self.dataHash_ = {}
+	self.objectMode_ = false
 end
 
 -- set object mode
 function CCSGameDataManager:setObjectMode(objectMode)
-	self.objectMode = objectMode or false
+	self.objectMode_ = objectMode or false
 end
 
 -- load data file from file path
@@ -27,10 +27,10 @@ function CCSGameDataManager:loadDataFile(filePath)
 	local fullPath = cc.FileUtils:getInstance():fullPathForFilename(filePath)
 
 	if io.exists(fullPath) then
-		if hashKey ~= nil then self.dataHash[hashKey] = {} else return nil end
+		if hashKey ~= nil then self.dataHash_[hashKey] = {} else return nil end
 		local json = json.decode(io.readfile(fullPath))
 
-		if self.objectMode then
+		if self.objectMode_ then
 			-- object mode
 			local fieldNames = json[1]
 			local length = #json
@@ -44,12 +44,12 @@ function CCSGameDataManager:loadDataFile(filePath)
 					data[fieldName] = v
 				end
 
-				if data.id ~= nil then self.dataHash[hashKey][data.id] = data end
+				if data.id ~= nil then self.dataHash_[hashKey][data.id] = data end
 			end
 		else
 			-- attribute mode
 			for i, v in ipairs(json) do
-				if v.id ~= nil then self.dataHash[hashKey][v.id] = v end
+				if v.id ~= nil then self.dataHash_[hashKey][v.id] = v end
 			end
 		end
 	else
@@ -66,7 +66,7 @@ end
 
 -- get game data list by hash key
 function CCSGameDataManager:getGameDataList(hashKey)
-	return self.dataHash[hashKey]
+	return self.dataHash_[hashKey]
 end
 
 -- get game data by hash key and id

@@ -12,3 +12,14 @@
 /compile_easy_framework.bat
 /samples/config/config.sublime-workspace
 /samples/config/config.sublime-project
+/samples/htmltext/.buildpath
+/samples/htmltext/.cocos-project.json
+/samples/htmltext/.project
+/samples/htmltext/config.json
+/samples/htmltext/debug_mac.sh
+/samples/htmltext/debug_win.bat
+/samples/htmltext/native
+/samples/htmltext/proj.android
+/samples/htmltext/proj.android_without_anysdk
+/samples/htmltext/proj.ios
+/samples/htmltext/proj.wp8
