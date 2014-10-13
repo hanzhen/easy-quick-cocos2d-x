@@ -10,5 +10,8 @@ easy.FRAMEWORK_NAME = "easy-quick-cocos2d-x"
 
 easy.ui = import(".ui.init")
 
-if package.loaded["ui"] == nil then ui = import("..framework.ui") end
+if not ui then ui = import("..framework.ui") end
 table.merge(ui, import(".ui"))
+
+if not display then display = import("..framework.display") end
+table.merge(display, import(".display"))
