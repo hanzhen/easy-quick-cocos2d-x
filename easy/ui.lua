@@ -12,4 +12,13 @@ function ui.newHTMLTextLabel(text, params)
 	return label
 end
 
+-- create TTF label can be touched
+function ui.newMenuItemLabel(params)
+	local node = display.newNode()
+	local label = display.newTTFLabel(params)
+	node:setTouchEnabled(true)
+	node:addChild(label)
+	return node
+end
+
 return ui

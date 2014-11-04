@@ -6,5 +6,6 @@
 local ui = {}
 
 ui.UIHTMLTextLabel = import(".UIHTMLTextLabel")
+ui.UITextList = import(".UITextList")
 
 return ui

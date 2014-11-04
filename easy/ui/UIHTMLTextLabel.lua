@@ -235,10 +235,8 @@ function UIHTMLTextLabel:addTextField_(lines)
 		return label__
 	end
 
-	for i, line in ipairs(lines) do
-		-- 计算基础高度
-		baseHeight = baseHeight + line.maxHeight + self.lineSpace_
-		textFieldWidth = math.max(textFieldWidth, baseWidth)
+	for i = #lines, 1, -1 do
+		local line = lines[i]
 		baseWidth = 0
 
 		-- 遍历行元素
@@ -248,21 +246,25 @@ function UIHTMLTextLabel:addTextField_(lines)
 				-- 文本元素
 				local label = createTTFLabel__(element)
 				label:setAnchorPoint(cc.p(0, 0))
-				label:setPosition(cc.p(baseWidth, -baseHeight))
+				label:setPosition(cc.p(baseWidth, baseHeight))
 				baseWidth = baseWidth + label:getContentSize().width
 				self:addChild(label)
 			else
 				-- 图像元素
 				local sprite = element.sprite
 				sprite:setAnchorPoint(cc.p(0, 0))
-				sprite:setPosition(cc.p(baseWidth, -baseHeight))
+				sprite:setPosition(cc.p(baseWidth, baseHeight))
 				baseWidth = baseWidth + element.img.width
 				self:addChild(sprite)
 			end
 		end
+
+		-- 计算基础高度
+		textFieldWidth = math.max(textFieldWidth, baseWidth)
+		baseHeight = baseHeight + line.maxHeight + self.lineSpace_
 	end
 
-	self:setContentSize(cc.size(textFieldWidth, baseHeight))
+	self:setContentSize(cc.size(textFieldWidth, baseHeight - self.lineSpace_))
 end
 
 return UIHTMLTextLabel
