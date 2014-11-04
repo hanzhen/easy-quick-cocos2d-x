@@ -28,6 +28,8 @@ end
 
 -- 添加一条多颜色文本
 function UITextList:addText(text, updateVisible)
+	local oldX, oldY = self.scrollNode:getPosition()
+
 	local item = self:newItem()
 	local label = UIHTMLTextLabel.new({
 		color = self.textColor_,
@@ -44,7 +46,13 @@ function UITextList:addText(text, updateVisible)
 	self:addItem(item)
 	self:reload()
 
-	if updateVisible then self:gotToEnd() end
+	if updateVisible then
+		-- 直接到最底部
+		self:gotToEnd()
+	else
+		-- 返回原位置
+		self:moveTo(oldX, oldY - labelSize.height)
+	end
 end
 
 -- 显示到文本末尾
@@ -52,6 +60,12 @@ function UITextList:gotToEnd()
 	local x, y = self.scrollNode:getPosition()
 	local bound = self.scrollNode:getCascadeBoundingBox()
 	if bound.height >= self.viewRect_.height then self.scrollNode:setPosition(x, 0) end
+end
+
+-- 滚动结点移动到指定位置
+function UITextList:moveTo(x, y)
+	local bound = self.scrollNode:getCascadeBoundingBox()
+	if bound.height >= self.viewRect_.height then self.scrollNode:setPosition(x, y) end
 end
 
 -- 布局方法
