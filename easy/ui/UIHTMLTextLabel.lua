@@ -85,8 +85,8 @@ function UIHTMLTextLabel:parseString_(data)
 				-- 图片标签
 				tag.img = {}
 				tag.img.src = v._attr.src
-				tag.img.width = v._attr.width
-				tag.img.height = v._attr.height
+				tag.img.width = tonumber(v._attr.width)
+				tag.img.height = tonumber(v._attr.height)
 			end
 		end
 
@@ -122,8 +122,10 @@ function UIHTMLTextLabel:calculateTextWidth_(tags)
 			end
 		elseif tag.name == "img" then
 			tag.sprite = display.newSprite(tag.img.src)
-			if tag.img.width then tag.sprite:setContentSize(tag.img.width, tag.sprite:getContentSize().height) end
-			if tag.img.height then tag.sprite:setContentSize(tag.sprite:getContentSize().width, tag.img.height) end
+			local imgSize = tag.sprite:getContentSize()
+			if not tag.img.width then tag.img.width = imgSize.width end
+			if not tag.img.height then tag.img.height = imgSize.height end
+			tag.sprite:setContentSize(tag.img.width, tag.img.height)
 		end
 	end
 
