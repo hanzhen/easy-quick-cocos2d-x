@@ -99,7 +99,7 @@ function UIHTMLTextLabel:parseString_(v, tag)
 			-- 链接标签
 			if v._attr.href then
 				local hrefArr = string.split(v._attr.href, ":")
-				if #hrefArr > 1 then tag.event = hrefArr[2] end
+				if #hrefArr > 1 and string.lower(hrefArr[1]) == "event" then tag.event = hrefArr[2] end
 			end
 			
 			self:parseString_(v[1], tag)
