@@ -52,48 +52,61 @@ function UIHTMLTextLabel:update()
 	self:clear()
 
 	local data = html.parsestr(self.text_)
-	local tags = self:parseString_(data)
+	local tags = self:parse_(data)
 	self:calculateTextWidth_(tags)
 	local lines = self:createTextLines_(tags)
 	self:addTextField_(lines)
 end
 
--- 解析字符串
-function UIHTMLTextLabel:parseString_(data)
+-- 解析
+function UIHTMLTextLabel:parse_(data)
 	local tags = {}
 
 	-- 遍历标签数组
 	for i, v in ipairs(data) do
-		local tag = {}
-
-		if type(v) ~= "table" then
-			-- 非标签文字
-			tag.name = "font"
-			tag.text = v
-			tag.color = self.color_
-			tag.size = self.fontSize_
-		else
-			tag.name = v._tag
-
-			-- 标签文字
-			if v._tag == "font" then
-				-- 字体标签
-				tag.text = v[1]
-				tag.color = color.hex2rgb(v._attr.color)
-				tag.size = tonumber(v._attr.size) or self.fontSize_
-			elseif v._tag == "img" then
-				-- 图片标签
-				tag.img = {}
-				tag.img.src = v._attr.src
-				tag.img.width = tonumber(v._attr.width)
-				tag.img.height = tonumber(v._attr.height)
-			end
-		end
-
-		table.insert(tags, tag)
+		table.insert(tags, self:parseString_(v))
 	end
 
 	return tags
+end
+
+-- 解析字符串
+function UIHTMLTextLabel:parseString_(v, tag)
+	tag = tag or {}
+
+	if type(v) ~= "table" then
+		-- 非标签文字
+		tag.name = "font"
+		tag.text = v
+		tag.color = self.color_
+		tag.size = self.fontSize_
+	else
+		tag.name = v._tag
+
+		-- 标签文字
+		if v._tag == "font" then
+			-- 字体标签
+			tag.text = v[1]
+			tag.color = color.hex2rgb(v._attr.color)
+			tag.size = tonumber(v._attr.size) or self.fontSize_
+		elseif v._tag == "img" then
+			-- 图片标签
+			tag.img = {}
+			tag.img.src = v._attr.src
+			tag.img.width = tonumber(v._attr.width)
+			tag.img.height = tonumber(v._attr.height)
+		elseif v._tag == "a" then
+			-- 链接标签
+			if v._attr.href then
+				local hrefArr = string.split(v._attr.href, ":")
+				if #hrefArr > 1 then tag.event = hrefArr[2] end
+			end
+			
+			self:parseString_(v[1], tag)
+		end
+	end
+
+	return tag
 end
 
 -- 计算文本宽度
@@ -130,6 +143,14 @@ function UIHTMLTextLabel:calculateTextWidth_(tags)
 			if not tag.img.width then tag.img.width = imgSize.width end
 			if not tag.img.height then tag.img.height = imgSize.height end
 			tag.sprite:setContentSize(tag.img.width, tag.img.height)
+
+			if tag.event then
+				-- 事件监听
+				tag.sprite:setTouchEnabled(true)
+				tag.sprite:addNodeEventListener(cc.NODE_TOUCH_EVENT, function (event)
+					self:dispatchEvent({ name = tag.event })
+				end)
+			end
 		end
 	end
 
@@ -162,19 +183,21 @@ function UIHTMLTextLabel:createTextLines_(tags)
 	end
 
 	-- 插入新文本段
-	local function insertNewTextElement__(text, color, size)
+	local function insertNewTextElement__(text, color, size, event)
 		local element__ = {}
 		element__.text = text
 		element__.color = color
 		element__.size = size
+		element__.event = event
 		table.insert(line, element__)
 	end
 
 	-- 插入新图像段
-	local function insertNewImgElement__(img, sprite)
+	local function insertNewImgElement__(img, sprite, event)
 		local element__ = {}
 		element__.img = img
 		element__.sprite = sprite
+		element__.event = event
 		table.insert(line, element__)
 	end
 
@@ -187,7 +210,7 @@ function UIHTMLTextLabel:createTextLines_(tags)
 			for j, charSize in ipairs(tag.charSizes) do
 				if currentLineWidth + charSize.width > self.lineWidth_ then
 					-- 换行
-					insertNewTextElement__(str, tag.color, tag.size)
+					insertNewTextElement__(str, tag.color, tag.size, tag.event)
 					newLine__()
 				end
 
@@ -198,7 +221,7 @@ function UIHTMLTextLabel:createTextLines_(tags)
 
 				if j == charCount then
 					-- 文本结束
-					insertNewTextElement__(str, tag.color, tag.size)
+					insertNewTextElement__(str, tag.color, tag.size, tag.event)
 					str = ""
 					if i == tagCount then insertLine__() end
 				end
@@ -209,7 +232,7 @@ function UIHTMLTextLabel:createTextLines_(tags)
 				newLine__()
 			end
 
-			insertNewImgElement__(tag.img, tag.sprite)
+			insertNewImgElement__(tag.img, tag.sprite, tag.event)
 			lineMaxHeight = math.max(lineMaxHeight, tag.sprite:getContentSize().height)
 			currentLineWidth = currentLineWidth + tag.sprite:getContentSize().width
 			if i == tagCount then insertLine__() end
@@ -229,6 +252,7 @@ function UIHTMLTextLabel:addTextField_(lines)
 
 	-- 创建文本对象
 	local function createTTFLabel__(element)
+		local node__ = nil
 		local label__ = cc.ui.UILabel.new({
 			text = element.text,
 			color = element.color,
@@ -238,7 +262,22 @@ function UIHTMLTextLabel:addTextField_(lines)
 			valign = ui.TEXT_VALIGN_BOTTOM
 			})
 
-		return label__
+		label__:setAnchorPoint(0, 0)
+
+		if element.event then
+			-- 监听事件
+			local contentSize__ = label__:getContentSize()
+			node__ = display.newNode()
+			node__:setAnchorPoint(0, 0)
+			node__:setContentSize(contentSize__.width, contentSize__.height)
+			node__:setTouchEnabled(true)
+			node__:addNodeEventListener(cc.NODE_TOUCH_EVENT, function (event)
+				self:dispatchEvent({ name = element.event })
+			end)
+			node__:addChild(label__)
+		end
+
+		return node__ or label__
 	end
 
 	for i = #lines, 1, -1 do
@@ -251,7 +290,6 @@ function UIHTMLTextLabel:addTextField_(lines)
 			if element.text then
 				-- 文本元素
 				local label = createTTFLabel__(element)
-				label:setAnchorPoint(cc.p(0, 0))
 				label:setPosition(cc.p(baseWidth, baseHeight))
 				baseWidth = baseWidth + label:getContentSize().width
 				self:addChild(label)
