@@ -20,6 +20,7 @@ function UITextList:ctor(params)
 		self.textLineSpace_ = params.textLineSpace or -2
 	end
 
+	self.textList_ = {};
 	self.scaleToWorldSpace_ = self:scaleToParent_()
 end
 
@@ -29,7 +30,9 @@ function UITextList:setItemHistory(itemHistory)
 end
 
 -- 添加一条多颜色文本
-function UITextList:addText(text, updateVisible)
+function UITextList:addText(text, updateVisible, batchMode)
+	updateVisible = updateVisible or false
+	batchMode = batchMode or false
 	local oldX, oldY = self.scrollNode:getPosition()
 
 	local item = self:newItem()
@@ -46,14 +49,16 @@ function UITextList:addText(text, updateVisible)
 	item:addContent(label)
 	item:setItemSize(labelSize.width, labelSize.height, true)
 	self:addItem(item)
-	self:reload()
+	table.insert(self.textList_, text);
+
+	if not batchMode then self:reload() end
 
 	local deleteFirst = false
 	local firstItemWidth, firstItemHeight = self.items_[1]:getItemSize()
 
 	if self.itemHistory_ > 0 and self:getItemCount() > self.itemHistory_ then
 		deleteFirst = true
-		self:removeItem(self.items_[1])
+		self:removeTextByIndex(1)
 	end
 
 	if updateVisible then
@@ -63,6 +68,37 @@ function UITextList:addText(text, updateVisible)
 		-- 返回原位置
 		self:moveTo(oldX, oldY - labelSize.height, labelSize.height, firstItemHeight)
 	end
+end
+
+-- 通过索引移除文本
+function UITextList:removeTextByIndex(index)
+	if index > #self.textList_ then return end
+	self:removeItem(self.items_[index])
+	table.remove(self.textList_, index)
+end
+
+-- 移除整个文本列表
+function UITextList:removeTextList()
+	self:removeAllItems()
+	self.textList_ = {}
+end
+
+-- 导入文本列表
+function UITextList:importTextList(list, updateVisible)
+	updateVisible = updateVisible or false
+
+	for i, v in ipairs(list) do
+		self:addText(v, updateVisible, false)
+	end
+
+	self:reload()
+
+	if updateVisible then self:gotToEnd() end
+end
+
+-- 导出文本列表
+function UITextList:exportTextList()
+	return self.textList_
 end
 
 -- 显示到文本末尾
