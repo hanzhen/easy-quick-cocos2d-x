@@ -118,6 +118,10 @@ function UIHTMLTextLabel:calculateTextWidth_(tags)
 				local charSize = {}
 				charSize.width = label:getContentSize().width
 				charSize.height = label:getContentSize().height
+
+				-- 修正部分字体中文标点符号获取宽度不准确的bug
+				if char == "“" or char == "”" then charSize.width = tag.size end
+
 				table.insert(tag.charSizes, charSize)
 			end
 		elseif tag.name == "img" then
