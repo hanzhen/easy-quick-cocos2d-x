@@ -4,6 +4,15 @@
 -- Date: 2014-10-09
 --
 
+-- 特殊字符
+local SPECIAL_CHARACTERS = {
+	"“",
+	"”",
+	"‘",
+	"’",
+	" "
+}
+
 local html = import("..modules.html")
 
 if not cc.utils then cc.utils = require("framework.cc.utils.init") end
@@ -133,7 +142,7 @@ function UIHTMLTextLabel:calculateTextWidth_(tags)
 				charSize.height = label:getContentSize().height
 
 				-- 修正部分字体中文标点符号获取宽度不准确的bug
-				if char == "“" or char == "”" then charSize.width = tag.size end
+				if self:isSpecialCharacter_(char) then charSize.width = tag.size end
 
 				table.insert(tag.charSizes, charSize)
 			end
@@ -155,6 +164,15 @@ function UIHTMLTextLabel:calculateTextWidth_(tags)
 	end
 
 	label:release()
+end
+
+-- 判断是否为特殊字符
+function UIHTMLTextLabel:isSpecialCharacter_(char)
+	for i, v in ipairs(SPECIAL_CHARACTERS) do
+		if char == v then return true end
+	end
+
+	return false
 end
 
 -- 创建文本行
