@@ -6,9 +6,6 @@
 
 local CCSGameDataManager = class("CCSGameDataManager")
 
--- data file extension
-CCSGameDataManager.DATA_FILE_EXTENSION = ".json"
-
 -- constructor method
 function CCSGameDataManager:ctor()
 	self.dataHash_ = {}
@@ -22,7 +19,6 @@ end
 
 -- load data file from file path
 function CCSGameDataManager:loadDataFile(filePath)
-	filePath = filePath..self.DATA_FILE_EXTENSION
 	local hashKey = self:_genHashKey(filePath)
 	local fullPath = cc.FileUtils:getInstance():fullPathForFilename(filePath)
 
