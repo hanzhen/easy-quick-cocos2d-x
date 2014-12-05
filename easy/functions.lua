@@ -33,17 +33,18 @@ function string.string2chars(input)
 
 	while i <= length do
 		local b = string.byte(input, i)
-		local offset = 1
+		local offset = string.utf8len(b)
+		-- local offset = 1
 
-		if b > 0 and b <= 127 then
-			offset = 1
-		elseif b >= 192 and b <= 223 then
-			offset = 2
-		elseif b >= 224 and b <= 239 then
-			offset = 3
-		elseif b >= 240 and b <= 247 then
-			offset = 4
-		end
+		-- if b > 0 and b <= 127 then
+		-- 	offset = 1
+		-- elseif b >= 192 and b <= 223 then
+		-- 	offset = 2
+		-- elseif b >= 224 and b <= 239 then
+		-- 	offset = 3
+		-- elseif b >= 240 and b <= 247 then
+		-- 	offset = 4
+		-- end
 		
 		local char = string.sub(input, i, i + offset - 1)
 		table.insert(list, char)

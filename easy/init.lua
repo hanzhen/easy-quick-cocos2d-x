@@ -8,6 +8,7 @@ import(".functions")
 easy = easy or {}
 easy.FRAMEWORK_NAME = "easy-quick-cocos2d-x"
 
+easy.managers = import(".managers.init")
 easy.ui = import(".ui.init")
 
 if not ui then ui = import("..framework.ui") end
