@@ -10,7 +10,12 @@ local SPECIAL_CHARACTERS = {
 	"”",
 	"‘",
 	"’",
-	" "
+	" ",
+	"，",
+	"。",
+	"；",
+	"！",
+	"？"
 }
 
 local html = import("..modules.html")
