@@ -29,7 +29,6 @@ end)
 -- 构造函数
 function UIHTMLTextLabel:ctor(params)
 	cc(self):addComponent("components.behavior.EventProtocol"):exportMethods()
-
 	params = params or {}
 	self:setParams(params)
 	self:setContentSize(cc.size(1, 1))
@@ -45,6 +44,10 @@ function UIHTMLTextLabel:setParams(params)
 	self.fontSize_ = params.fontSize or (self.fontSize_ or 14)
 	self.lineWidth_ = params.lineWidth or (self.linWidth or 280)
 	self.lineSpace_ = params.lineSpace or (self.lineSpace_ or -4)
+
+	if params.shadowColor then
+		self.shadowColor_ = color.hex2rgba(params.shadowColor)
+	end
 end
 
 -- 设置字符串
@@ -284,6 +287,11 @@ function UIHTMLTextLabel:addTextField_(lines)
 			align = ui.TEXT_ALIGN_LEFT,
 			valign = ui.TEXT_VALIGN_BOTTOM
 			})
+
+		-- 阴影
+		if self.shadowColor_ then
+			label__:enableShadow(self.shadowColor_, cc.size(2, -2))
+		end
 
 		label__:setAnchorPoint(0, 0)
 

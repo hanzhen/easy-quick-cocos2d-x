@@ -20,6 +20,16 @@ function color.hex2rgb(hex)
 	return cc.c3b(r, g, b)
 end
 
+-- convert hex color to rgba color
+function color.hex2rgba(hex)
+	hex = string.gsub(hex, "#", "")
+	local r = tonumber("0x"..string.sub(hex, 1, 2))
+	local g = tonumber("0x"..string.sub(hex, 3, 4))
+	local b = tonumber("0x"..string.sub(hex, 5, 6))
+	local a = tonumber("0x"..string.sub(hex, 7, 8))
+	return cc.c4b(r, g, b, a)
+end
+
 -- convert string to char array
 function string.string2chars(input)
 	local list = {}

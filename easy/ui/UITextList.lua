@@ -18,6 +18,7 @@ function UITextList:ctor(params)
 		self.textFontSize_ = params.textFontSize or 14
 		self.textLineWidth_ = params.textLineWidth or self.viewRect_.width
 		self.textLineSpace_ = params.textLineSpace or -2
+		self.shadowColor_ = params.shadowColor or nil
 	end
 
 	self.textList_ = {};
@@ -41,7 +42,8 @@ function UITextList:addText(text, updateVisible, batchMode)
 		font = self.textFont_,
 		fontSize = self.textFontSize_,
 		lineWidth = self.textLineWidth_,
-		lineSpace = self.textLineSpace_
+		lineSpace = self.textLineSpace_,
+		shadowColor = self.shadowColor_
 		})
 	label:setString(text)
 	label:setTouchEnabled(false)
